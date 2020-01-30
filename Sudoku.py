@@ -7,6 +7,16 @@ class Sudoku:
             print(line)
         print()
 
+    def print_board_zeros(self):
+        for row in self.board:
+            for num in row:
+                if type(num) == list:
+                    print(0, end=" ")
+                else:
+                    print(num, end=" ")
+            print()
+        print()
+
     def del_row_pos(self, row_num, possibility):
         for x, num in enumerate(self.board[row_num]):
             if type(num) == list:
@@ -107,6 +117,6 @@ class Sudoku:
                                     if type(self.board[row_num][column_num]) == list:
                                         self.check_box_unique(row_num, column_num, box_row, box_column)
                                         pass
-                            self.print_board()
+                            self.print_board_zeros()
             if all_filled:
                 board_filled = True
