@@ -1,3 +1,6 @@
+import copy
+
+
 class Sudoku:
     def __init__(self, board):
         self.board = board[:]
@@ -84,28 +87,6 @@ class Sudoku:
                 self.board[row_num][column_num] = possibility
                 return
 
-    def check_only_two(self, num_possibilities):
-        """If any box has only two slots for a number, and they are in the same row or column,
-            delete all other possibilities of that num in the rest of the row or column"""
-        for num in num_possibilities:
-            if len(num) == 3:
-                if num[1][0] == num[2][0]:
-                    row_num = num[1][0]
-                    number = num[0]
-                    self.del_row_pos(row_num, number)  # Delete all row possibilities
-                    if type(self.board[num[1][0]][num[1][1]]) == list:
-                        self.board[num[1][0]][num[1][1]].append(number)
-                    if type(self.board[num[2][0]][num[2][1]]) == list:
-                        self.board[num[2][0]][num[2][1]].append(number)
-                elif num[1][1] == num[2][1]:
-                    column_num = num[1][1]
-                    number = num[0]
-                    self.del_column_pos(column_num, number)  # Delete all column possiblilties
-                    if type(self.board[num[1][0]][num[1][1]]) == list:
-                        self.board[num[1][0]][num[1][1]].append(number)
-                    if type(self.board[num[2][0]][num[2][1]]) == list:
-                        self.board[num[2][0]][num[2][1]].append(number)
-
     def solve(self):
         all_filled = True # Will be set false if there are any lists
         for row_num, row in enumerate(self.board):
@@ -118,11 +99,10 @@ class Sudoku:
             all_filled = True # will be set false if the program finds any list of possible nums
             for box_row in range (0, 3):
                 for box_column in range(0, 3):
-                    num_possibilities = [[1], [2], [3], [4], [5], [6], [7], [8], [9]]
-                    for sub_x in range (0, 3):
-                        for sub_y in range(0, 3):
-                            row_num = box_row * 3 + sub_x
-                            column_num = box_column * 3 + sub_y
+                    for sub_row in range (0, 3):
+                        for sub_column in range(0, 3):
+                            row_num = box_row * 3 + sub_row
+                            column_num = box_column * 3 + sub_column
                             num = self.board[row_num][column_num]
                             if type(num) == list and len(num) == 1: # There is only one possibility for this slot
                                 self.board[row_num][column_num] = num[0]
@@ -131,10 +111,6 @@ class Sudoku:
                                 self.del_row_pos(row_num, num)
                                 self.del_column_pos(column_num, num)
                                 self.del_box_pos(box_row, box_column, num)
-                                for i in range(len(num_possibilities)):  # Deletes number from num possibilities
-                                    if num == num_possibilities[i][0]:
-                                        del num_possibilities[i]
-                                        break
                             else:
                                 all_filled = False # A list was found, all positions are not filled
                                 self.check_row_unique(row_num, column_num)
@@ -142,10 +118,5 @@ class Sudoku:
                                     self.check_column_unique(row_num, column_num)
                                     if type(self.board[row_num][column_num]) == list:
                                         self.check_box_unique(row_num, column_num, box_row, box_column)
-                                for possibility in num_possibilities:
-                                    if possibility[0] in num:
-                                        possibility.append((row_num, column_num))
-                            self.print_board_zeros()
-                    self.check_only_two(num_possibilities)
             if all_filled:
                 board_filled = True

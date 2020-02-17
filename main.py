@@ -35,6 +35,7 @@ def main():
 
     board = Sudoku(board3)
     board.solve()
+    board.print_board()
 
 
 if __name__ == "__main__":
